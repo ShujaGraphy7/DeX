@@ -1,0 +1,44 @@
+.bg-gradient {
+  background-repeat: no-repeat;
+  background-size: 100vh;
+  background: #180350;
+  background-image: radial-gradient(at 61% 8%, #8c1a99 0px, transparent 50%),
+    radial-gradient(at 10% 95%, hsl(320, 96%, 50%) 0px, transparent 50%),
+    radial-gradient(at 83% 86%, hsl(43, 77%, 21%) 0px, transparent 50%),
+    radial-gradient(at 96% 96%, hsl(359, 32%, 55%) 0px, transparent 50%),
+    radial-gradient(at 25% 11%, hsl(342, 20%, 50%) 0px, transparent 50%);
+}
+
+.bg-gradient-color {
+  background-color: #000000b5;
+}
+
+.gradient-box {
+  background-color:#d199ff;
+  background-image:
+  radial-gradient(at 91% 97%, hsla(328,80%,68%,1) 0px, transparent 50%),
+  radial-gradient(at 94% 33%, hsla(341,67%,76%,1) 0px, transparent 50%),
+  radial-gradient(at 29% 1%, hsla(339,85%,72%,1) 0px, transparent 50%),
+  radial-gradient(at 84% 24%, hsla(16,75%,63%,1) 0px, transparent 50%),
+  radial-gradient(at 1% 57%, hsla(224,61%,79%,1) 0px, transparent 50%),
+  radial-gradient(at 52% 30%, hsla(316,92%,60%,1) 0px, transparent 50%),
+  radial-gradient(at 45% 16%, hsla(53,99%,72%,1) 0px, transparent 50%);}
+
+  .toggle-checkbox1:checked {
+    @apply: right-0 border-green-400;
+    right: 0;
+    border-color: rgb(167, 0, 167);
+  }
+  .toggle-checkbox1:checked + .toggle-label1 {
+    @apply: bg-green-400;
+    background-color: rgb(167, 0, 167);
+  }
+  .toggle-checkbox2:checked {
+    @apply: right-0 border-green-400;
+    right: 0;
+    border-color: rgb(167, 0, 167);
+  }
+  .toggle-checkbox2:checked + .toggle-label2 {
+    @apply: bg-green-400;
+    background-color: rgb(167, 0, 167);
+  }
