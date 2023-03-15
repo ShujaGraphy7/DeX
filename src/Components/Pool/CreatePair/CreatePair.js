@@ -12,19 +12,18 @@ import { getAccount } from "@wagmi/core";
 import { ethers } from "ethers";
 
 function CreatePair(props) {
-  const { data: signer, /* isError*/ } = useSigner();
+  const { data: signer /* isError*/ } = useSigner();
   const Address = process.env.REACT_APP_CONTRACT_ADDRESS;
   // const [factoryAddress, ] = useState("");
   // const [pairAddress, ] = useState("");
-  const account = getAccount();
+  let account = getAccount();
 
   // ---------------------U S E - E F F E C T S--------------------------- \\
 
   useEffect(() => {
     if (account.isConnected) {
       setCreatePairButton("Approve");
-    }
-    else{
+    } else {
       setCreatePairButton("Connect Wallet");
     }
   }, [account.isConnected]);
@@ -45,7 +44,7 @@ function CreatePair(props) {
   const [tokenAbutton, setTokenAbutton] = useState("Select Token A");
   const [tokenBbutton, setTokenBbutton] = useState("Select Token B");
 
-  const [deadline, ] = useState(new Date());
+  const [deadline, setDeadline] = useState(new Date());
 
   // ------------------------------------------------------------ \\
 
@@ -105,59 +104,50 @@ function CreatePair(props) {
     abi: Token,
     signerOrProvider: signer,
   });
-
+  
   // ------------------------------------------------------------------- \\
 
   // ------------------------------------------------------------------- \\
 
   const AddLiquidity = async () => {
+    setDeadline(new Date())
     setCreatePairButton("Approving Token A...");
 
     try {
-      await TokenAContract
-        ?.approve(
-          Address,
-          ethers.utils.parseEther(token1Value.toString())
-        )
-        .then((res) => {
+      await TokenAContract?.approve(
+        Address,
+        ethers.utils.parseEther(token1Value.toString())
+      ).then((res) => {
+        res.wait().then(async () => {
+          setCreatePairButton("Approving Token B...");
 
-          res.wait().then(async () => {
-            setCreatePairButton("Approving Token B...");
+          await TokenBContract?.approve(
+            Address,
+            ethers.utils.parseEther(token2Value.toString())
+          ).then((res) => {
+            res.wait().then(async () => {
+              setCreatePairButton("Adding Liquidity...");
 
-            await TokenBContract
-              ?.approve(
-                Address,
-                ethers.utils.parseEther(token2Value.toString())
-              )
-              .then((res) => {
-                res.wait().then(async () => {
-                  setCreatePairButton("Adding Liquidity...");
+              await RouterContract?.addLiquidity(
+                AddressA,
+                AddressB,
+                token1Value,
+                token2Value,
+                "0",
+                "0",
+                account.address,
+                (deadline.getTime() / 1000 + 20 * 60).toFixed(0).toString()
+              ).then((_res) => {
+                _res.wait();
+                setCreatePairButton("Liquidity Added...");
 
-                  await RouterContract
-                    ?.addLiquidity(
-                      AddressA,
-                      AddressB,
-                      token1Value,
-                      token2Value,
-                      "0",
-                      "0",
-                      account.address,
-                      (deadline.getTime() / 1000 + 20 * 60)
-                        .toFixed(0)
-                        .toString()
-                    )
-                    .then((_res) => {
-                      _res.wait();
-                      setCreatePairButton("Liquidity Added...");
-
-                      console.log("Liqudity add:", _res);
-                      props.closeLiquidityPopup();
-
-                    });
-                });
+                console.log("Liqudity add:", _res);
+                props.closeLiquidityPopup();
               });
+            });
           });
         });
+      });
     } catch (error) {
       console.log("error:", error);
       setCreatePairButton("Liquidity Adding Failed...");
@@ -165,29 +155,38 @@ function CreatePair(props) {
   };
 
   const AddLiquidityETH = async () => {
+    console.log(AddressB, token2Value, account.address);
     try {
-        await TokenBContract
-            ?.approve(UniSwapRouter, ethers.utils.parseEther(token2Value.toString()))
-            .then((res) => {
-                res.wait().then(async () => {
-                    await RouterContract
-                        ?.addLiquidityETH(AddressB, token2Value, "0", "0", account.address, (((deadline.getTime() / 1000) + 20 * 60).toFixed(0)).toString(), { value: ethers.utils.parseEther(token1Value.toString()) })
-                        .then((res) => {
-                            console.log("Add liquidity:", res);
-                        });
-                });
-            });
-
+      await TokenBContract?.approve(
+        UniSwapRouter,
+        ethers.utils.parseEther(token2Value.toString())
+      ).then((res) => {
+        res.wait().then(async () => {
+          await RouterContract?.addLiquidityETH(
+            AddressB,
+            token2Value,
+            "0",
+            "0",
+            account?.address,
+            (deadline.getTime() / 1000 + 20 * 60).toFixed(0).toString(),
+            { value: ethers.utils.parseEther(token1Value.toString()) }
+          ).then((res) => {
+            console.log("Add liquidity:", res);
+          });
+        });
+      });
     } catch (error) {
-        console.log("error:", error);
+      console.log("error:", error);
     }
-};
+  };
   // ------------------------------------------------------ \\
 
   const getAddressA = (add) => {
     setAddressA(add);
     AddressA?.length === 42
       ? setTokenAbutton(AddressA.slice("", 6) + "..." + AddressA.slice(-6))
+      : AddressA?.length === 3
+      ? setTokenAbutton("ETH")
       : setTokenAbutton("Select Token A");
     console.log(AddressA);
     AddressA && settokenAdd1Popup(false);
@@ -197,7 +196,9 @@ function CreatePair(props) {
     setAddressB(add);
     AddressB.length === 42
       ? setTokenBbutton(AddressB.slice("", 6) + "..." + AddressB.slice(-6))
-      : setTokenAbutton("Select Token A");
+      : AddressB?.length === 3
+      ? setTokenBbutton("ETH")
+      : setTokenBbutton("Select Token B");
     console.log(AddressB);
     AddressB && settokenAdd2Popup(false);
   };
@@ -300,16 +301,25 @@ function CreatePair(props) {
                       )}
                     </div>
                   </div>
-                  {token1Value < 1 || token2Value < 1 ? (
+                  {token1Value <= 0 || token2Value <= 0 ? (
                     <button
-                    disabled={true}
-                    className="text-white bg-fuchsia-400 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-4 py-2 dark:bg-fuchsia-600 dark:hover:bg-fuchsia-700 dark:focus:ring-fuchsia-800">
+                      disabled={true}
+                      className="text-white bg-fuchsia-400 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-4 py-2 dark:bg-fuchsia-600 dark:hover:bg-fuchsia-700 dark:focus:ring-fuchsia-800"
+                    >
+                      {createPairButton}
+                    </button>
+                  ) : tokenAbutton == "ETH" || tokenBbutton == "ETH" ? (
+                    <button
+                      onClick={AddLiquidityETH}
+                      className="text-white bg-fuchsia-700 hover:bg-fuchsia-800 focus:ring-4 focus:outline-none focus:ring-fuchsia-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-fuchsia-600 dark:hover:bg-fuchsia-700 dark:focus:ring-fuchsia-800"
+                    >
                       {createPairButton}
                     </button>
                   ) : (
                     <button
-                    onClick={AddLiquidity}
-                    className="text-white bg-fuchsia-700 hover:bg-fuchsia-800 focus:ring-4 focus:outline-none focus:ring-fuchsia-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-fuchsia-600 dark:hover:bg-fuchsia-700 dark:focus:ring-fuchsia-800">
+                      onClick={AddLiquidity}
+                      className="text-white bg-fuchsia-700 hover:bg-fuchsia-800 focus:ring-4 focus:outline-none focus:ring-fuchsia-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-fuchsia-600 dark:hover:bg-fuchsia-700 dark:focus:ring-fuchsia-800"
+                    >
                       {createPairButton}
                     </button>
                   )}

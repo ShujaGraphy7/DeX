@@ -9,8 +9,10 @@ function TokenPass(props) {
   const [enabled, setEnabled] = useState(false);
 
   const onChangeHandedler = (e) => {
-    setIsEmpty(true);
-    setAddress(e.target.value);
+    enabled &&(
+      setAddress(e.target.value)
+      )
+      setIsEmpty(true);
 
     if (address.length !== 42) {
       setIsEmpty(false);
@@ -20,12 +22,18 @@ function TokenPass(props) {
 
   const onAddPressHandeler = (e) => {
     // e.preventDefault();
+    if (address.length === 42) {
     props.onAddPress(address);
+  }
+  else if (!enabled){
+      props.onAddPress(address);
+
+    }
   };
 
   useEffect(() => {
-    !enabled && setAddress("ETH")
-  }, []);
+    !enabled && setAddress("ETH");
+  }, [enabled]);
 
   return (
     <>
@@ -97,7 +105,8 @@ function TokenPass(props) {
                         </div>
                         ):(""
                         )}
-                    {!isEmpty ? (
+                        {enabled ?
+                    (!isEmpty ? (
                       <button
                         onClick={onAddPressHandeler}
                         className="text-white bg-fuchsia-700 hover:bg-fuchsia-800 focus:ring-4 focus:outline-none focus:ring-fuchsia-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-fuchsia-600 dark:hover:bg-fuchsia-700 dark:focus:ring-fuchsia-800"
@@ -112,7 +121,12 @@ function TokenPass(props) {
                       >
                         <div>Add</div>
                       </button>
-                    )}
+                    )):(<button
+                      onClick={onAddPressHandeler}
+                      className="text-white bg-fuchsia-700 focus:ring-4 focus:outline-none focus:ring-fuchsia-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-fuchsia-600 dark:hover:bg-fuchsia-700 dark:focus:ring-fuchsia-800"
+                    >
+                      <div>Add</div>
+                    </button>)}
                   </div>
                 </div>
               </div>
