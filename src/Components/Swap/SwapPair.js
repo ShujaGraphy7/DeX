@@ -7,7 +7,7 @@ import Token from "../../ABIs/Token.json";
 import { useContract, useSigner } from "wagmi";
 import { getAccount } from "@wagmi/core";
 import { ethers } from "ethers";
-
+import "../../styles.css"
 function CreatePair(props) {
   const { data: signer /* isError*/ } = useSigner();
   const Address = process.env.REACT_APP_CONTRACT_ADDRESS;
@@ -105,13 +105,18 @@ function CreatePair(props) {
   // ------------------------------------------------------------------- \\
 
   const SwapExactTokensForTokens = async () => {
+    setCreatePairButton("Swaping...")
     try {
         const _amount = ethers.utils.parseEther(token1Value.toString())
         console.log("Amount:", _amount);
+        setCreatePairButton("Approving...")
+
         await TokenAContract
             ?.approve(Address, ethers.utils.parseEther(token1Value.toString()))
             .then((_app) => {
                 _app.wait().then(async () => {
+                  setCreatePairButton("Swaping...")
+
                     await RouterContract
                         ?.swapExactTokensForTokens(token1Value, "0", [AddressA, AddressB], account.address, (((deadline.getTime() / 1000) + 20 * 60).toFixed(0)).toString())
                         .then((_swap) => {
@@ -119,8 +124,12 @@ function CreatePair(props) {
                         })
                 })
             })
+            setCreatePairButton("Create Pair")
+
 
     } catch (error) {
+      setCreatePairButton("Error...")
+
         console.log("error:", error);
     }
 };
@@ -172,6 +181,7 @@ const SwapETHForExactTokens = async () => {
   };
 
   return (
+    <>
         <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
           <div className="relative transform overflow-auto rounded-lg bg-white text-center shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
             <div className="bg-fuchsia-50 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
@@ -279,6 +289,8 @@ const SwapETHForExactTokens = async () => {
             </div>
           </div>
         </div>
+        
+        </>
   );
 }
 
