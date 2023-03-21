@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import UniSwapRouter from "../../../ABIs/UniswapV2Router02.json";
-import Token from "../../../ABIs/Token.json";
+// import Token from "../../../ABIs/Token.json";
 import Factory from "../../../ABIs/Factory.json";
 import UniswapPair from "../../../ABIs/UniswapV2Pair.json";
 import { useContract, useSigner } from "wagmi";
@@ -19,8 +19,7 @@ function LiquidityPairs() {
   const [pairAddress, setPairAddress] = useState("");
   const [liquidity, setLiquidity] = useState("");
   const [deadline, setDeadline] = useState(new Date());
-const [WETH, setWETH] = useState("");
-
+  const [WETH, setWETH] = useState("");
 
   const popPairToggle = (item) => {
     popPairDetails ? setPopPairDetails(false) : setPopPairDetails(true);
@@ -77,6 +76,7 @@ const [WETH, setWETH] = useState("");
 
   useEffect(() => {
     AllPairs();
+    // eslint-disable-next-line
   }, []);
 
   const RemoveLiquidity = async () => {
@@ -181,7 +181,7 @@ const [WETH, setWETH] = useState("");
       wethaddress = res;
     });
 
-    if (wethaddress == token1Address || wethaddress == token2Address) {
+    if (wethaddress === token1Address || wethaddress === token2Address) {
       setPairType("ETH-Token");
     } else {
       setPairType("Token-Token");
@@ -195,6 +195,10 @@ const [WETH, setWETH] = useState("");
     else if(pairType === "Token-Token"){
       RemoveLiquidity();
     }
+  }
+
+  const liquidityHandel =(val)=>{
+    setLiquidity(val);
   }
 
   return (
@@ -231,6 +235,7 @@ const [WETH, setWETH] = useState("");
           ))}
           {popPairDetails && (
             <Popup
+              onLiquidityInput = {liquidityHandel}
               tokenType={pairType}
               token1={token1Address}
               token2={token2Address}

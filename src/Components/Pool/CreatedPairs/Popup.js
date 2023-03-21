@@ -1,6 +1,14 @@
+import { useState } from "react";
 import { FaInfoCircle } from "react-icons/fa";
 import { IoIosArrowBack } from "react-icons/io";
+
 function Popup(props) {
+  const [liquidity, setLiquidity] = useState("");
+
+
+  const TokenAmountHandeler = (e) =>{
+    setLiquidity(e.target.value);
+  }
   return (
     <div aria-labelledby="modal-title" role="dialog" aria-modal="true">
       <div className="fixed inset-0 bg-black bg-opacity-10 backdrop-blur-sm transition-opacity"></div>
@@ -29,15 +37,25 @@ function Popup(props) {
               <div className="my-5">
                 <div className="my-5 py-2 bg-fuchsia-200 rounded-2xl">
                   <b>Token 1 Address:</b> {props.token1}
-                </div>
+                </div> 
                 <div className="my-5 py-2 bg-fuchsia-200 rounded-2xl">
                   <b>Token 2 Address:</b> {props.token2}
                 </div>
                 <div className="my-5 px-5 py-3 mx-auto bg-fuchsia-200 rounded-2xl w-fit">
                   <b>Pair Type</b> {props.tokenType}
                 </div>
+                <div className="relative my-2">
+                        <input
+                        onChange={TokenAmountHandeler}
+                        type="number"
+                        placeholder="Enter Tokens Amount"
+                        className="block w-full p-3 text-lg text-fuchsia-900 border placeholder-fuchsia-300 border-fuchsia-300 rounded-lg bg-fuchsia-50 focus:ring-fuchsia-500 focus:border-fuchsia-500 dark:bg-fuchsia-700 dark:border-fuchsia-600 dark:placeholder-fuchsia-400 dark:text-white dark:focus:ring-fuchsia-500 dark:focus:border-fuchsia-500"
+                        />
+                        </div>
                   <button 
-                  onClick={props.action}
+
+                  // onLiquidityInput={liquidity}
+                  onClick={ ()=>{props.onLiquidityInput(liquidity); props.action()} }
                   className="text-white bg-fuchsia-700 hover:bg-fuchsia-800 focus:ring-4 focus:outline-none focus:ring-fuchsia-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-fuchsia-600 dark:hover:bg-fuchsia-700 dark:focus:ring-fuchsia-800">
                     Remove Liquidity
                   </button>
