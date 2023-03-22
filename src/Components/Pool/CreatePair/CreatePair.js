@@ -164,7 +164,7 @@ function CreatePair(props) {
         res.wait().then(async () => {
           await RouterContract?.addLiquidityETH(
             AddressB,
-            token2Value,
+            token2Value * 10**18,
             "0",
             "0",
             account?.address,
@@ -247,15 +247,17 @@ function CreatePair(props) {
                       pool, and can be redeemed at any time.
                     </p>
                   </div>
-
                   <div className="relative my-2">
-                    <input
-                      onChange={Token1ValueHandeler}
-                      type="number"
-                      min="0"
-                      placeholder="Enter Token Amount"
-                      className="block w-full p-3 pr-44 text-lg text-fuchsia-900 placeholder:text-fuchsia-300 border border-fuchsia-300 rounded-lg bg-fuchsia-50 focus:ring-fuchsia-500 focus:border-fuchsia-500 dark:bg-fuchsia-700 dark:border-fuchsia-600 dark:placeholder-fuchsia-400 dark:text-white dark:focus:ring-fuchsia-500 dark:focus:border-fuchsia-500"
-                    />
+                {tokenAbutton !== "ETH" ?(
+
+                  <input
+                  onChange={Token1ValueHandeler}
+                  type="number"
+                  min="0"
+                  placeholder="Enter Token Amount"
+                  className="block w-full p-3 pr-44 text-lg text-fuchsia-900 placeholder:text-fuchsia-300 border border-fuchsia-300 rounded-lg bg-fuchsia-50 focus:ring-fuchsia-500 focus:border-fuchsia-500 dark:bg-fuchsia-700 dark:border-fuchsia-600 dark:placeholder-fuchsia-400 dark:text-white dark:focus:ring-fuchsia-500 dark:focus:border-fuchsia-500"
+                  />
+                  ):(<div className="p-3 mt-10"></div>)}
                     <div>
                       <button
                         onClick={() => tokenAddpop1()}
@@ -279,7 +281,7 @@ function CreatePair(props) {
                     <input
                       onChange={Token2ValueHandeler}
                       type="number"
-                      placeholder="Enter Token Amount"
+                      placeholder={tokenAbutton==="ETH"?("Enter ETH Amount"):("Enter Token Amount")}
                       min="0"
                       className="block placeholder:text-fuchsia-300 w-full p-3 pr-44 text-lg text-fuchsia-900 border border-fuchsia-300 rounded-lg bg-fuchsia-50 focus:ring-fuchsia-500 focus:border-fuchsia-500 dark:bg-fuchsia-700 dark:border-fuchsia-600 dark:placeholder-fuchsia-400 dark:text-white dark:focus:ring-fuchsia-500 dark:focus:border-fuchsia-500"
                     />
@@ -301,14 +303,14 @@ function CreatePair(props) {
                       )}
                     </div>
                   </div>
-                  {token1Value <= 0 || token2Value <= 0 ? (
+                  { token2Value <= 0 ? (
                     <button
                       disabled={true}
                       className="text-white bg-fuchsia-400 focus:ring-4 focus:outline-none font-medium rounded-lg text-sm px-4 py-2 dark:bg-fuchsia-600 dark:hover:bg-fuchsia-700 dark:focus:ring-fuchsia-800"
                     >
                       {createPairButton}
                     </button>
-                  ) : tokenAbutton == "ETH" || tokenBbutton == "ETH" ? (
+                  ) : tokenAbutton === "ETH" || tokenBbutton === "ETH" ? (
                     <button
                       onClick={AddLiquidityETH}
                       className="text-white bg-fuchsia-700 hover:bg-fuchsia-800 focus:ring-4 focus:outline-none focus:ring-fuchsia-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-fuchsia-600 dark:hover:bg-fuchsia-700 dark:focus:ring-fuchsia-800"
