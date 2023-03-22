@@ -110,6 +110,7 @@ function CreatePair(props) {
   // ------------------------------------------------------------------- \\
 
   const AddLiquidity = async () => {
+    console.log("Add liquidity")
     setDeadline(new Date())
     setCreatePairButton("Approving Token A...");
 
@@ -155,16 +156,16 @@ function CreatePair(props) {
   };
 
   const AddLiquidityETH = async () => {
-    console.log(AddressB, token2Value, account.address);
+
     try {
       await TokenBContract?.approve(
-        UniSwapRouter,
+        Address,
         ethers.utils.parseEther(token2Value.toString())
       ).then((res) => {
         res.wait().then(async () => {
           await RouterContract?.addLiquidityETH(
             AddressB,
-            token2Value * 10**18,
+            token1Value * 10**18,
             "0",
             "0",
             account?.address,
@@ -176,7 +177,7 @@ function CreatePair(props) {
         });
       });
     } catch (error) {
-      console.log("error:", error);
+      console.error("error:", error);
     }
   };
   // ------------------------------------------------------ \\
@@ -257,7 +258,13 @@ function CreatePair(props) {
                   placeholder="Enter Token Amount"
                   className="block w-full p-3 pr-44 text-lg text-fuchsia-900 placeholder:text-fuchsia-300 border border-fuchsia-300 rounded-lg bg-fuchsia-50 focus:ring-fuchsia-500 focus:border-fuchsia-500 dark:bg-fuchsia-700 dark:border-fuchsia-600 dark:placeholder-fuchsia-400 dark:text-white dark:focus:ring-fuchsia-500 dark:focus:border-fuchsia-500"
                   />
-                  ):(<div className="p-3 mt-10"></div>)}
+                  ):(<input
+                    onChange={Token1ValueHandeler}
+                    type="number"
+                    min="0"
+                    placeholder="Enter ETH"
+                    className="block w-full p-3 pr-44 text-lg text-fuchsia-900 placeholder:text-fuchsia-300 border border-fuchsia-300 rounded-lg bg-fuchsia-50 focus:ring-fuchsia-500 focus:border-fuchsia-500 dark:bg-fuchsia-700 dark:border-fuchsia-600 dark:placeholder-fuchsia-400 dark:text-white dark:focus:ring-fuchsia-500 dark:focus:border-fuchsia-500"
+                    />)}
                     <div>
                       <button
                         onClick={() => tokenAddpop1()}

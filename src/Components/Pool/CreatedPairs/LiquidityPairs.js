@@ -20,6 +20,7 @@ function LiquidityPairs() {
   const [liquidity, setLiquidity] = useState("");
   const [deadline, setDeadline] = useState(new Date());
   const [WETH, setWETH] = useState("");
+  
 
   const popPairToggle = (item) => {
     popPairDetails ? setPopPairDetails(false) : setPopPairDetails(true);
@@ -84,6 +85,7 @@ function LiquidityPairs() {
   }, []);
 
   const RemoveLiquidity = async () => {
+    
     try {
       //it will get the factory address from the router contract
       await RouterContract?.factory().then(async (_address) => {
@@ -177,14 +179,10 @@ function LiquidityPairs() {
     await item.token1().then((res) => {
       setToken2Address(res.toString());
     });
-    let wethaddress;
-    await RouterContract.WETH().then((res) => {
-      wethaddress = res;
-    });
 
-    if (wethaddress === token1Address || wethaddress === token2Address) {
+    if (WETH === token1Address || WETH === token2Address) {
       setPairType("ETH-Token");
-    } else {
+    } else if(WETH !== token1Address || WETH !== token2Address){
       setPairType("Token-Token");
     }
 
