@@ -50,6 +50,7 @@ function LiquidityPairs() {
     abi: UniswapPair,
     signerOrProvider: signer,
   });
+
   // ------------------------------------------------------------------- \\
 
   const AllPairs = async () => {
@@ -64,14 +65,17 @@ function LiquidityPairs() {
     let count = (await FactoryContract.allPairsLength()).toString();
     for (let i = 0; i < count; i++) {
       try {
-        await FactoryContract?.allPairs(i).then((_res) => {
+        await FactoryContract?.allPairs(i).then(async (_res) => {
           const PairContract = new ethers.Contract(_res, UniswapPair, signer);
-          setFactoryAddressList((prev) => [...prev, PairContract]);
+          if((await PairContract.balanceOf(account.address)).toString() >0 ){
+            setFactoryAddressList((prev) => [...prev, PairContract]);
+          }
         });
       } catch (error) {
         console.log("error:", error);
       }
     }
+    
   };
 
   useEffect(() => {
@@ -166,14 +170,11 @@ function LiquidityPairs() {
   };
 
   const detailPopup = async (item) => {
-    console.log(item);
     await item.token0().then((res) => {
-      console.log(res);
       setToken1Address(res.toString());
     });
 
     await item.token1().then((res) => {
-      console.log(res);
       setToken2Address(res.toString());
     });
     let wethaddress;
@@ -186,6 +187,7 @@ function LiquidityPairs() {
     } else {
       setPairType("Token-Token");
     }
+
   };
 
   const removeLiquidityBTN=()=>{
@@ -217,9 +219,9 @@ function LiquidityPairs() {
         </div>
         <div className="p-4 bg-[#0000004c] rounded-b-2xl">
           {factoryAddressList.map((item, i) => (
-            <div className="p-4 bg-[#ffffff1a] rounded-md mb-2 flex items-center justify-around">
+            <div key={i} className="p-4 bg-[#ffffff1a] rounded-md mb-2 flex items-center justify-around">
               <div>
-                <ul className="text-white" key={i}>
+                <ul className="text-white" >
                   <b>Pair Address:</b> {item.address}
                 </ul>
               </div>

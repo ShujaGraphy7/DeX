@@ -64,12 +64,7 @@ export default function Navbar() {
               <li className="text-white hover:text-indigo-200">
                 <Link to="/Swap">Swap</Link>
               </li>
-              <li className="text-white hover:text-indigo-200">
-                <Link to="">Tokens</Link>
-              </li>
-              <li className="text-white hover:text-indigo-200">
-                <Link to="">NFTs</Link>
-              </li>
+              
               <li className="text-white hover:text-indigo-200">
                 <Link to="/Pool">Pool</Link>
               </li>
