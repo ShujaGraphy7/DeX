@@ -17,7 +17,6 @@ function TokenPass(props) {
     if (address.length !== 42) {
       setIsEmpty(false);
     }
-    console.log(address);
   };
 
   const onAddPressHandeler = () => {
