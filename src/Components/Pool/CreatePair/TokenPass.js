@@ -20,8 +20,7 @@ function TokenPass(props) {
     console.log(address);
   };
 
-  const onAddPressHandeler = (e) => {
-    // e.preventDefault();
+  const onAddPressHandeler = () => {
     if (address.length === 42) {
     props.onAddPress(address);
   }

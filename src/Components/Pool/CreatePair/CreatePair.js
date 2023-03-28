@@ -200,28 +200,28 @@ function CreatePair(props) {
       console.error("error:", error);
     }
   };
-  // ------------------------------------------------------ \\
 
+  // ------------------------------------------------------ \\
+  
   const getAddressA = (add) => {
     setAddressA(add);
-    AddressA?.length === 42
-      ? setTokenAbutton(AddressA.slice("", 6) + "..." + AddressA.slice(-6))
-      : AddressA?.length === 3
+  
+    add?.length === 42
+      ? setTokenAbutton(add.slice("", 6) + "..." + add.slice(-6))
+      : add?.length === 3
       ? setTokenAbutton("ETH")
       : setTokenAbutton("Select Token A");
-    console.log(AddressA);
-    AddressA && settokenAdd1Popup(false);
+    add && settokenAdd1Popup(false);
   };
 
   const getAddressB = (add) => {
     setAddressB(add);
-    AddressB.length === 42
-      ? setTokenBbutton(AddressB.slice("", 6) + "..." + AddressB.slice(-6))
-      : AddressB?.length === 3
+    add.length === 42
+      ? setTokenBbutton(add.slice("", 6) + "..." + add.slice(-6))
+      : add?.length === 3
       ? setTokenBbutton("ETH")
       : setTokenBbutton("Select Token B");
-    console.log(AddressB);
-    AddressB && settokenAdd2Popup(false);
+    add && settokenAdd2Popup(false);
   };
 
   return (
