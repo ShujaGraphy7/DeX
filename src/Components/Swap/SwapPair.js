@@ -39,7 +39,7 @@ function CreatePair(props) {
   const [tokenAbutton, setTokenAbutton] = useState("Select Token A");
   const [tokenBbutton, setTokenBbutton] = useState("Select Token B");
 
-  const [deadline, setDeadline] = useState(new Date());
+  const [deadline, /*setDeadline*/] = useState(new Date());
 
   // ------------------------------------------------------------ \\
 
@@ -94,11 +94,11 @@ function CreatePair(props) {
     signerOrProvider: signer,
   });
 
-  const TokenBContract = useContract({
-    address: AddressB,
-    abi: Token,
-    signerOrProvider: signer,
-  });
+  // const TokenBContract = useContract({
+  //   address: AddressB,
+  //   abi: Token,
+  //   signerOrProvider: signer,
+  // });
   
   // ------------------------------------------------------------------- \\
 
@@ -269,7 +269,7 @@ const SwapETHForExactTokens = async () => {
                     >
                       {createPairButton}
                     </button>
-                  ) : tokenAbutton == "ETH" || tokenBbutton == "ETH" ? (
+                  ) : tokenAbutton === "ETH" || tokenBbutton === "ETH" ? (
                     <button
                       onClick={SwapETHForExactTokens}
                       className="text-white bg-fuchsia-700 hover:bg-fuchsia-800 focus:ring-4 focus:outline-none focus:ring-fuchsia-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-fuchsia-600 dark:hover:bg-fuchsia-700 dark:focus:ring-fuchsia-800"

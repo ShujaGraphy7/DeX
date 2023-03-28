@@ -98,7 +98,7 @@ function TokenPass(props) {
                         <input
                         onChange={onChangeHandedler}
                         type="text"
-                        value={address}
+                        value={(address==="ETH"? (""):(address))}
                         placeholder="Paste token Address Here"
                         className="block w-full p-3 text-lg text-fuchsia-900 border placeholder-fuchsia-300 border-fuchsia-300 rounded-lg bg-fuchsia-50 focus:ring-fuchsia-500 focus:border-fuchsia-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-fuchsia-500 dark:focus:border-fuchsia-500"
                         />
