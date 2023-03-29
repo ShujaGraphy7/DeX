@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import UniSwapRouter from "../../../ABIs/UniswapV2Router02.json";
 // import Token from "../../../ABIs/Token.json";
 import Factory from "../../../ABIs/Factory.json";
