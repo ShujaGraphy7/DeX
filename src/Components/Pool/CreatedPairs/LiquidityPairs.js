@@ -20,11 +20,15 @@ function LiquidityPairs() {
   const [liquidity, setLiquidity] = useState("");
   const [deadline, setDeadline] = useState(new Date());
   const [WETH, setWETH] = useState("");
-  
 
-  const popPairToggle = (item) => {
+  const popPairToggle = async (item) => {
+    setToken1Address("");
+    setToken2Address("");
+    setPairType("");
     popPairDetails ? setPopPairDetails(false) : setPopPairDetails(true);
-    detailPopup(item);
+    await popupTokenAddress(item).then(() => {
+      detailPopup();
+    });
   };
 
   const [factoryAddressList, setFactoryAddressList] = useState([]);
@@ -46,7 +50,7 @@ function LiquidityPairs() {
     signerOrProvider: signer,
   });
 
-    const PairContract = useContract({
+  const PairContract = useContract({
     address: pairAddress,
     abi: UniswapPair,
     signerOrProvider: signer,
@@ -59,7 +63,7 @@ function LiquidityPairs() {
     let _FactoryContract;
     try {
       await RouterContract?.factory().then(async (_Fac) => {
-        _FactoryContract = new ethers.Contract(_Fac,Factory,signer);
+        _FactoryContract = new ethers.Contract(_Fac, Factory, signer);
       });
     } catch (error) {
       console.log("error:", error);
@@ -69,7 +73,7 @@ function LiquidityPairs() {
       try {
         await _FactoryContract?.allPairs(i).then(async (_res) => {
           const PairContract = new ethers.Contract(_res, UniswapPair, signer);
-          if((await PairContract.balanceOf(account.address)).toString() >0 ){
+          if ((await PairContract.balanceOf(account.address)).toString() > 0) {
             setFactoryAddressList((prev) => [...prev, PairContract]);
           }
         });
@@ -77,51 +81,47 @@ function LiquidityPairs() {
         console.log("error:", error);
       }
     }
-    
   };
 
   const RemoveLiquidity = async () => {
-    
     try {
       //it will get the factory address from the router contract
       await RouterContract?.factory().then(async (_address) => {
         console.log("Address:", _address);
         setFactoryAddress(_address);
         // it will get the pair address of the input tokens from the factory contract
-        await FactoryContract?.getPair(token1Address, token2Address).then(async (_Address) => {
-          console.log("Address:", _Address);
-          setPairAddress(_Address);
-          //it will get approve of the lp tokens to uniswap contract from pair contract
-          await PairContract
-            ?.approve(
+        await FactoryContract?.getPair(token1Address, token2Address).then(
+          async (_Address) => {
+            console.log("Address:", _Address);
+            setPairAddress(_Address);
+            //it will get approve of the lp tokens to uniswap contract from pair contract
+            await PairContract?.approve(
               Address,
               ethers.utils.parseEther(liquidity.toString())
-            )
-            .then((liquidityAllowance) => {
+            ).then((liquidityAllowance) => {
               liquidityAllowance.wait().then(async () => {
                 //it will then call removeLiquidity function from the uniswap
-                await RouterContract
-                  ?.removeLiquidity(
-                    token1Address,
-                    token2Address,
-                    liquidity,
-                    "0",
-                    "0",
-                    account.address,
-                    (deadline.getTime() / 1000 + 20 * 60).toFixed(0).toString()
-                  )
-                  .then((remove) => {
-                    console.log("Liquidity Removed:", remove);
-                  });
+                await RouterContract?.removeLiquidity(
+                  token1Address,
+                  token2Address,
+                  liquidity,
+                  "0",
+                  "0",
+                  account.address,
+                  (deadline.getTime() / 1000 + 20 * 60).toFixed(0).toString()
+                ).then((remove) => {
+                  console.log("Liquidity Removed:", remove);
+                });
               });
             });
-        });
+          }
+        );
       });
     } catch (_err) {
       console.log("Error:", _err);
     }
   };
-  
+
   //remove liquidity ETH function
   const RemoveLiquidityETH = async () => {
     setDeadline(new Date());
@@ -133,41 +133,36 @@ function LiquidityPairs() {
         await RouterContract?.factory().then(async (_fac) => {
           console.log("Address:", _fac);
           setFactoryAddress(_fac);
-          await FactoryContract?.getPair(WETH, token2Address).then(async (_Address) => {
-            console.log("Address:", _Address);
-            setPairAddress(_Address);
-            await PairContract
-              ?.approve(
+          await FactoryContract?.getPair(WETH, token2Address).then(
+            async (_Address) => {
+              console.log("Address:", _Address);
+              setPairAddress(_Address);
+              await PairContract?.approve(
                 Address,
                 ethers.utils.parseEther(liquidity.toString())
-              )
-              .then((Approval) => {
+              ).then((Approval) => {
                 Approval.wait().then(async () => {
-                  await RouterContract
-                    ?.removeLiquidityETH(
-                      token2Address,
-                      liquidity,
-                      "0",
-                      "0",
-                      account.address,
-                      (deadline.getTime() / 1000 + 20 * 60)
-                        .toFixed(0)
-                        .toString()
-                    )
-                    .then((Removed) => {
-                      console.log("Removed liquidity:", Removed);
-                    });
+                  await RouterContract?.removeLiquidityETH(
+                    token2Address,
+                    liquidity,
+                    "0",
+                    "0",
+                    account.address,
+                    (deadline.getTime() / 1000 + 20 * 60).toFixed(0).toString()
+                  ).then((Removed) => {
+                    console.log("Removed liquidity:", Removed);
+                  });
                 });
               });
-          });
+            }
+          );
         });
       });
     } catch (_err) {
       console.log("Error:", _err);
     }
   };
-
-  const detailPopup = async (item) => {
+  const popupTokenAddress = async (item) => {
     await item.token0().then((res) => {
       setToken1Address(res.toString());
     });
@@ -175,27 +170,28 @@ function LiquidityPairs() {
     await item.token1().then((res) => {
       setToken2Address(res.toString());
     });
-
-    if (WETH === token1Address || WETH === token2Address) {
-      setPairType("ETH-Token");
-    } else if(WETH !== token1Address || WETH !== token2Address){
-      setPairType("Token-Token");
-    }
-
   };
 
-  const removeLiquidityBTN=()=>{
-    if(pairType === "ETH-Token"){
-      RemoveLiquidityETH();
+  const detailPopup = async () => {
+    if (WETH === token1Address || WETH === token2Address) {
+      setPairType("ETH-Token");
     }
-    else if(pairType === "Token-Token"){
+    if (WETH !== token1Address || WETH !== token2Address) {
+      setPairType("Token-Token");
+    }
+  };
+
+  const removeLiquidityBTN = () => {
+    if (pairType === "ETH-Token") {
+      RemoveLiquidityETH();
+    } else if (pairType === "Token-Token") {
       RemoveLiquidity();
     }
-  }
+  };
 
-  const liquidityHandel =(val)=>{
+  const liquidityHandel = (val) => {
     setLiquidity(val);
-  }
+  };
 
   return (
     <div className="mx-10">
@@ -213,9 +209,12 @@ function LiquidityPairs() {
         </div>
         <div className="p-4 bg-[#0000004c] rounded-b-2xl">
           {factoryAddressList.map((item, i) => (
-            <div key={i} className="p-4 bg-[#ffffff1a] rounded-md mb-2 flex items-center justify-around">
+            <div
+              key={i}
+              className="p-4 bg-[#ffffff1a] rounded-md mb-2 flex items-center justify-around"
+            >
               <div>
-                <ul className="text-white" >
+                <ul className="text-white">
                   <b>Pair Address:</b> {item.address}
                 </ul>
               </div>
@@ -231,7 +230,7 @@ function LiquidityPairs() {
           ))}
           {popPairDetails && (
             <Popup
-              onLiquidityInput = {liquidityHandel}
+              onLiquidityInput={liquidityHandel}
               tokenType={pairType}
               token1={token1Address}
               token2={token2Address}

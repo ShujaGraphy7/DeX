@@ -1,0 +1,23 @@
+--- KaizenSwap DeX ---
+
+Functionalities:
+    1. Create pool
+    2. Swap Pool
+    3. Remove Liquidity
+
+1. Create Pool
+    click on Create pair button in Pool section
+    click on Select Token A and add eth for eth to token liquidity or token to create toke to same for the Select Token B 
+    enter eth amount in Add liquidity popup in first input if select eth to token  and enter tokens amount in second input or enter tokens amount in both inputs if choose token to token
+    click on approve button and approve number of required transactions on metamask
+
+2. swap pool
+    click on Select Token A and add eth for eth token pair or token to create token to token pair
+    same for the Select Token B 
+    enter eth amount in first input from swap pair screen if select eth to token  and enter tokens amount in second input or enter tokens amount in both inputs if choose token to token
+    click on create Pair button and approve number of required transactions on metamask
+
+3. Remove Liquidity
+    users can get there liquidity pairs in pool section by clicking on get liquidity pairs list button
+    click on detail to get pool Details
+    once you get pair details you can remove liquidity by input amount and press remove liquidity button
