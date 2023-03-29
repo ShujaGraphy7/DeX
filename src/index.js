@@ -4,7 +4,7 @@ import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import "@rainbow-me/rainbowkit/styles.css";
-import {BrowserRouter} from "react-router-dom";
+import {HashRouter} from "react-router-dom";
 import {
   darkTheme,
   getDefaultWallets,
@@ -45,7 +45,7 @@ const wagmiClient = createClient({
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <WagmiConfig client={wagmiClient}>
-    <BrowserRouter>
+    <HashRouter>
       <RainbowKitProvider
         chains={chains}
         modalSize={{
@@ -61,7 +61,7 @@ root.render(
       >
         <App />
       </RainbowKitProvider>
-    </BrowserRouter>
+    </HashRouter>
   </WagmiConfig>
 );
 reportWebVitals();
