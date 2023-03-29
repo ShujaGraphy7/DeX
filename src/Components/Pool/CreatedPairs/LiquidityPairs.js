@@ -56,17 +56,18 @@ function LiquidityPairs() {
 
   const AllPairs = async () => {
     setFactoryAddressList([]);
+    let _FactoryContract;
     try {
       await RouterContract?.factory().then(async (_Fac) => {
-        setFactoryAddress(_Fac);
+        _FactoryContract = new ethers.Contract(_Fac,Factory,signer);
       });
     } catch (error) {
       console.log("error:", error);
     }
-    let count = (await FactoryContract.allPairsLength()).toString();
+    let count = (await _FactoryContract.allPairsLength()).toString();
     for (let i = 0; i < count; i++) {
       try {
-        await FactoryContract?.allPairs(i).then(async (_res) => {
+        await _FactoryContract?.allPairs(i).then(async (_res) => {
           const PairContract = new ethers.Contract(_res, UniswapPair, signer);
           if((await PairContract.balanceOf(account.address)).toString() >0 ){
             setFactoryAddressList((prev) => [...prev, PairContract]);
