@@ -80,11 +80,6 @@ function LiquidityPairs() {
     
   };
 
-  useEffect(() => {
-    AllPairs();
-    // eslint-disable-next-line
-  }, []);
-
   const RemoveLiquidity = async () => {
     
     try {
